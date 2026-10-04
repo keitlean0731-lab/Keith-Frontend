@@ -77,6 +77,6 @@ export const api = {
   products: () => request('/api/products'),
   users: () => request('/api/users'),
   createProduct: (payload) => request('/api/products', { method: 'POST', body: JSON.stringify(payload) }),
+  updateProduct: (id, payload) => request(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   deleteProduct: (id) => request(`/api/products/${id}`, { method: 'DELETE' }),
 }
-

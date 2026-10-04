@@ -13,6 +13,7 @@ const users = ref([])
 const activeView = ref('overview')
 const form = ref({ username: '', email: '', password: '', role: 'user' })
 const productForm = ref({ product_name: '', description: '', price: '', quantity: '' })
+const editingProduct = ref(null)
 
 const isAdmin = computed(() => user.value?.role === 'admin')
 const firstName = computed(() => user.value?.username?.split(' ')[0] || 'there')
@@ -98,6 +99,42 @@ async function createProduct() {
     await showView('products')
     await loadWorkspace()
     notice.value = 'Product created.'
+  } catch (requestError) {
+    error.value = requestError.message
+  } finally {
+    loading.value = false
+  }
+}
+
+function startEditProduct(product) {
+  resetMessage()
+  editingProduct.value = product.id
+  productForm.value = {
+    product_name: product.product_name || '',
+    description: product.description || '',
+    price: product.price ?? '',
+    quantity: product.quantity ?? '',
+  }
+}
+
+function cancelEditProduct() {
+  editingProduct.value = null
+  productForm.value = { product_name: '', description: '', price: '', quantity: '' }
+}
+
+async function updateProduct() {
+  resetMessage()
+  loading.value = true
+  try {
+    await api.updateProduct(editingProduct.value, {
+      product_name: productForm.value.product_name,
+      description: productForm.value.description,
+      price: Number(productForm.value.price),
+      quantity: Number(productForm.value.quantity),
+    })
+    cancelEditProduct()
+    await loadWorkspace()
+    notice.value = 'Product updated.'
   } catch (requestError) {
     error.value = requestError.message
   } finally {
@@ -218,8 +255,8 @@ onMounted(boot)
           <template v-else-if="activeView === 'products'">
             <div class="section-heading"><div><p class="eyebrow">Catalog</p><h2>Products</h2><p class="muted">Manage what your customers can find.</p></div></div>
             <div class="product-layout">
-              <section class="panel product-table-panel"><div class="panel-heading"><h3>All products</h3><span class="count-label">{{ products.length }} total</span></div><div v-if="loading && !products.length" class="skeleton-list"><i v-for="n in 4" :key="n"></i></div><div v-else-if="products.length" class="product-list"><div v-for="product in products" :key="product.id" class="product-row"><div class="product-symbol">{{ (product.product_name || 'P').charAt(0).toUpperCase() }}</div><div class="product-details"><strong>{{ product.product_name || 'Unnamed product' }}</strong><span>{{ product.description || 'No description added' }}</span></div><span class="price">{{ product.price != null ? `₱${Number(product.price).toLocaleString()}` : 'No price' }}</span><span class="quantity">{{ product.quantity ?? 0 }} in stock</span><button v-if="isAdmin" class="icon-button" title="Delete product" @click="deleteProduct(product)">×</button></div></div><div v-else class="empty-state"><strong>Your catalog is empty</strong><span>Create a product to begin.</span></div></section>
-              <section v-if="isAdmin" class="panel create-panel"><p class="eyebrow">Admin action</p><h3>Add a product</h3><form @submit.prevent="createProduct"><label>Product name<input v-model="productForm.product_name" required /></label><label>Description<textarea v-model="productForm.description" rows="3"></textarea></label><div class="field-grid"><label>Price<input v-model="productForm.price" type="number" min="0" step="0.01" required /></label><label>Quantity<input v-model="productForm.quantity" type="number" min="0" required /></label></div><button class="primary-button" type="submit" :disabled="loading">{{ loading ? 'Saving...' : 'Add product' }}</button></form></section>
+              <section class="panel product-table-panel"><div class="panel-heading"><h3>All products</h3><span class="count-label">{{ products.length }} total</span></div><div v-if="loading && !products.length" class="skeleton-list"><i v-for="n in 4" :key="n"></i></div><div v-else-if="products.length" class="product-list"><div v-for="product in products" :key="product.id" class="product-row"><div class="product-symbol">{{ (product.product_name || 'P').charAt(0).toUpperCase() }}</div><div class="product-details"><strong>{{ product.product_name || 'Unnamed product' }}</strong><span>{{ product.description || 'No description added' }}</span></div><span class="price">{{ product.price != null ? `₱${Number(product.price).toLocaleString()}` : 'No price' }}</span><span class="quantity">{{ product.quantity ?? 0 }} in stock</span><button v-if="isAdmin" class="edit-button" title="Edit product" @click="startEditProduct(product)">Edit</button><button v-if="isAdmin" class="icon-button" title="Delete product" @click="deleteProduct(product)">×</button></div></div><div v-else class="empty-state"><strong>Your catalog is empty</strong><span>Create a product to begin.</span></div></section>
+              <section v-if="isAdmin" class="panel create-panel"><p class="eyebrow">Admin action</p><h3>{{ editingProduct ? 'Edit product' : 'Add a product' }}</h3><form @submit.prevent="editingProduct ? updateProduct() : createProduct()"><label>Product name<input v-model="productForm.product_name" required /></label><label>Description<textarea v-model="productForm.description" rows="3"></textarea></label><div class="field-grid"><label>Price<input v-model="productForm.price" type="number" min="0" step="0.01" required /></label><label>Quantity<input v-model="productForm.quantity" type="number" min="0" required /></label></div><div class="form-actions"><button class="primary-button" type="submit" :disabled="loading">{{ loading ? 'Saving...' : editingProduct ? 'Save changes' : 'Add product' }}</button><button v-if="editingProduct" class="cancel-button" type="button" @click="cancelEditProduct">Cancel</button></div></form></section>
             </div>
           </template>
 

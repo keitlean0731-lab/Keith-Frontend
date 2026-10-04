@@ -103,8 +103,13 @@ input:focus, textarea:focus, select:focus { border-color: var(--green); backgrou
 .price { color: var(--muted); font-size: 13px; }
 .icon-button { border: 0; border-radius: 4px; padding: 4px 8px; color: var(--red); background: var(--red-soft); font-size: 16px; line-height: 1; }
 .icon-button:hover { color: #fff; background: var(--red); }
+.edit-button { border: 0; border-radius: 4px; padding: 4px 8px; color: var(--green); background: var(--green-soft); font-size: 12px; font-weight: 700; }
+.edit-button:hover { color: #fff; background: var(--green); }
 .create-panel form { margin-top: 22px; }
 .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-actions { display: flex; align-items: center; gap: 10px; }
+.cancel-button { border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; color: var(--muted); background: #fff; font-size: 14px; font-weight: 700; }
+.cancel-button:hover { border-color: var(--muted); color: var(--text); }
 .team-row b { color: var(--green); font-size: 12px; font-weight: 700; text-transform: capitalize; }
 .empty-state { display: grid; min-height: 150px; place-items: center; align-content: center; gap: 8px; color: var(--muted); text-align: center; }
 .empty-state strong { color: var(--text); font-size: 14px; }
