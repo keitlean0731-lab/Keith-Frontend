@@ -41,8 +41,8 @@ button:disabled { cursor: wait; opacity: .65; }
 .auth-panel .muted { display: none; }
 form { display: grid; gap: 18px; margin-top: 0; }
 label { display: grid; gap: 6px; color: #333; font-size: 14px; font-weight: 700; }
-input, textarea { width: 100%; border: 1px solid var(--border); border-left: 4px solid var(--green); border-radius: 8px; outline: none; padding: 12px; color: #333; background: var(--page); transition: .3s; }
-input:focus, textarea:focus { border-color: var(--green); background: #fff; }
+input, textarea, select { width: 100%; border: 1px solid var(--border); border-left: 4px solid var(--green); border-radius: 8px; outline: none; padding: 12px; color: #333; background: var(--page); transition: .3s; }
+input:focus, textarea:focus, select:focus { border-color: var(--green); background: #fff; }
 .primary-button { border: 0; border-radius: 8px; margin-top: 10px; padding: 12px; color: #fff; background: var(--green); font-size: 16px; font-weight: 700; transition: .3s; }
 .primary-button:hover { background: var(--green-dark); transform: none; }
 .primary-button.compact { padding: 10px 18px; font-size: 14px; }

@@ -11,7 +11,7 @@ const user = ref(null)
 const products = ref([])
 const users = ref([])
 const activeView = ref('overview')
-const form = ref({ username: '', email: '', password: '' })
+const form = ref({ username: '', email: '', password: '', role: 'user' })
 const productForm = ref({ product_name: '', description: '', price: '', quantity: '' })
 
 const isAdmin = computed(() => user.value?.role === 'admin')
@@ -49,7 +49,7 @@ async function submitAuth() {
   loading.value = true
   try {
     const response = mode.value === 'login'
-      ? await api.login({ username: form.value.username, password: form.value.password })
+      ? await api.login({ username: form.value.username, password: form.value.password, role: form.value.role })
       : await api.register(form.value)
 
     if (mode.value === 'register') {
@@ -163,6 +163,7 @@ onMounted(boot)
           <label v-if="mode === 'register'">Email<input v-model="form.email" type="email" autocomplete="email" required /></label>
           <label>Username<input v-model="form.username" type="text" autocomplete="username" required /></label>
           <label>Password<input v-model="form.password" type="password" autocomplete="current-password" required /></label>
+          <label v-if="mode === 'login'">Login as<select v-model="form.role" required><option value="user">User</option><option value="admin">Admin</option></select></label>
           <p v-if="error" class="form-error">{{ error }}</p>
           <p v-if="notice" class="form-notice">{{ notice }}</p>
           <button class="primary-button" type="submit" :disabled="loading">
