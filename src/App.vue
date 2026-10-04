@@ -49,7 +49,7 @@ async function submitAuth() {
   loading.value = true
   try {
     const response = mode.value === 'login'
-      ? await api.login({ username: form.value.username, password: form.value.password, role: form.value.role })
+      ? await api.login({ email: form.value.email, password: form.value.password, role: form.value.role })
       : await api.register(form.value)
 
     if (mode.value === 'register') {
@@ -161,7 +161,8 @@ onMounted(boot)
 
         <form @submit.prevent="submitAuth">
           <label v-if="mode === 'register'">Email<input v-model="form.email" type="email" autocomplete="email" required /></label>
-          <label>Username<input v-model="form.username" type="text" autocomplete="username" required /></label>
+          <label v-else>Email<input v-model="form.email" type="email" autocomplete="email" required /></label>
+          <label v-if="mode === 'register'">Username<input v-model="form.username" type="text" autocomplete="username" required /></label>
           <label>Password<input v-model="form.password" type="password" autocomplete="current-password" required /></label>
           <label v-if="mode === 'login'">Login as<select v-model="form.role" required><option value="user">User</option><option value="admin">Admin</option></select></label>
           <p v-if="error" class="form-error">{{ error }}</p>
